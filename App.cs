@@ -10,6 +10,16 @@ using System.Threading.Tasks;
 
 namespace ConsoleAppWithFluxorStateManagement;
 
+/*
+ Our App class dispatches the FetchDataAction action to notify the store of our intent.
+The ReduceFetchDataAction reducer method sets IsLoading to true, so our UI can reflect the change.
+The effect method is triggered by the FetchDataAction and asynchronously makes a data request to our mock server.
+The call to Dispatcher.Dispatch(fetchDataAction) in our App class completes, so redisplays the menu options.
+One second later the mock service returns data.
+The effect method bundles the result data into a new FetchDataResultAction and dispatches the action.
+The ReduceFetchDataResultAction reducer methods sets IsLoading to false, and sets Forecasts to the values in the action.
+The store now has new state for WeatherState so executes its StateChanged event, resulting in the new state being output to the console below the options menu.
+*/
 public class App
 {
     private readonly IStore Store;
