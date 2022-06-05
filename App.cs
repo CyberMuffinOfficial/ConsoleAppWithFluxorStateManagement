@@ -1,7 +1,9 @@
 ﻿using ConsoleAppWithFluxorStateManagement.Store;
 using ConsoleAppWithFluxorStateManagement.Store.CounterUseCase;
+using ConsoleAppWithFluxorStateManagement.Store.EditCustomerUseCase;
 using ConsoleAppWithFluxorStateManagement.Store.WeatherUseCase;
 using Fluxor;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,50 +33,29 @@ Every time IDispatcher.Dispatch is executed, the action dispatched will first be
 void BeforeDispatch(object action)
 Once all Middlewares have approved, this method is called to inform us the action is about to be reduced into state.
 void AfterDispatch(object action)
-After the action has been processed by all reducers this method will be called.*/
-public class App
+After the action has been processed by all reducers this method will be called.
+
+ IActionSubscriber allows us to subscribe to the dispatch pipeline and be notifified whenever an action has been dispatched.
+
+One particularly useful example of this is when we wish to retrieve a mutable object from an API server that we can edit in our application without having to store that mutable object in our immutable state.
+
+Another is when an action such as CustomerSearchAction is dispatched and the UI needs to know when it is complete so it can set focus to a specific control.
+
+
+This tutorial will demonstrate how to subscribe to be notified whenever a specific action is dispatched. When the subscriber is notified, a JSON representation of the action will be displayed in the console.
+
+ */
+public class App : IDisposable
 {
     private readonly IStore Store;
     public readonly IDispatcher Dispatcher;
-    public readonly IState<CounterState> CounterState;
-    private readonly IState<WeatherState> WeatherState;
+    private readonly IActionSubscriber ActionSubscriber;
 
-    public App(IStore store, IDispatcher dispatcher, IState<CounterState> counterState, IState<WeatherState> weatherState)
+    public App(IStore store, IDispatcher dispatcher, IActionSubscriber actionSubscriber)
     {
         Store = store;
         Dispatcher = dispatcher;
-        CounterState = counterState;
-        CounterState.StateChanged += CounterState_StateChanged;
-        WeatherState = weatherState;
-        WeatherState.StateChanged += WeatherState_StateChanged;
-    }
-
-    private void CounterState_StateChanged(object sender, EventArgs e)
-    {
-        Console.WriteLine("");
-        Console.WriteLine("==========================> CounterState");
-        Console.WriteLine("ClickCount is " + CounterState.Value.ClickCount);
-        Console.WriteLine("<========================== CounterState");
-        Console.WriteLine("");
-    }
-
-    private void WeatherState_StateChanged(object sender, EventArgs e)
-    {
-        Console.WriteLine("");
-        Console.WriteLine("=========================> WeatherState");
-        Console.WriteLine("IsLoading: " + WeatherState.Value.IsLoading);
-        if (!WeatherState.Value.Forecasts.Any())
-        {
-            Console.WriteLine("--- No weather forecasts");
-        }
-        else
-        {
-            Console.WriteLine("Temp C\tTemp F\tSummary");
-            foreach (WeatherForecast forecast in WeatherState.Value.Forecasts)
-                Console.WriteLine($"{forecast.TemperatureC}\t{forecast.TemperatureF}\t{forecast.Summary}");
-        }
-        Console.WriteLine("<========================== WeatherState");
-        Console.WriteLine("");
+        ActionSubscriber = actionSubscriber;
     }
 
     public void Run()
@@ -82,11 +63,11 @@ public class App
         Console.Clear();
         Console.WriteLine("Initializing store");
         Store.InitializeAsync().Wait();
+        SubscribeToResultAction();
         string input = "";
         do
         {
-            Console.WriteLine("1: Increment counter");
-            Console.WriteLine("2: Fetch data");
+            Console.WriteLine("1: Get mutable object from API server");
             Console.WriteLine("x: Exit");
             Console.Write("> ");
             input = Console.ReadLine();
@@ -94,20 +75,32 @@ public class App
             switch (input.ToLowerInvariant())
             {
                 case "1":
-                    var action = new IncrementCounterAction();
-                    Dispatcher.Dispatch(action);
-                    break;
-
-                case "2":
-                    var fetchDataAction = new FetchDataAction();
-                    Dispatcher.Dispatch(fetchDataAction);
+                    var getCustomerAction = new GetCustomerForEditAction(42);
+                    Dispatcher.Dispatch(getCustomerAction);
                     break;
 
                 case "x":
                     Console.WriteLine("Program terminated");
                     return;
             }
-
         } while (true);
+    }
+
+    private void SubscribeToResultAction()
+    {
+        Console.WriteLine($"Subscribing to action {nameof(GetCustomerForEditResultAction)}");
+        ActionSubscriber.SubscribeToAction<GetCustomerForEditResultAction>(this, action =>
+        {
+            // Show the object from the server in the console
+            string jsonToShowInConsole = JsonConvert.SerializeObject(action.Customer, Formatting.Indented);
+            Console.WriteLine("Action notification: " + action.GetType().Name);
+            Console.WriteLine(jsonToShowInConsole);
+        });
+    }
+
+    void IDisposable.Dispose()
+    {
+        // IMPORTANT: Unsubscribe to avoid memory leaks!
+        ActionSubscriber.UnsubscribeFromAllActions(this);
     }
 }
