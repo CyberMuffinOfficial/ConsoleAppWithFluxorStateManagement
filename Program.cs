@@ -1,5 +1,6 @@
 ﻿global using Fluxor;
 global using ConsoleAppWithFluxorStateManagement.Services;
+global using ConsoleAppWithFluxorStateManagement.Shared;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ConsoleAppWithFluxorStateManagement
