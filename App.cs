@@ -9,6 +9,16 @@ using System.Threading.Tasks;
 
 namespace ConsoleAppWithFluxorStateManagement;
 
+/* 
+ * The purpose of this demo is to demonstrate how to use fluxor state management in a dotnet application
+ * First we configure App.cs in Program.cs. Add dependency injection and the fluxor service that automatically scans the assembly for annotated classes/methods
+ * In App.cs, we create an infinite do while loop, and give the user the ability to increment the count
+ * When the command is issued, we dispatch a command with the class name as a parameter that is used as an identifier to determine which reducer function to execute
+ * The reducer will be triggered based on the class that is passed in the dispatch command
+ * The reducer function/method will create a new instance of the class that holds the state, and will push it to the store.
+ * In the reducer function, we need to pass both the name of the state that is to be replaced, as well as the action that gives us the values that we will need to change
+ * We must subscribe to this event 
+ */
 public class App
 {
     private readonly IStore Store;

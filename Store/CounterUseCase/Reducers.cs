@@ -11,4 +11,9 @@ public static class Reducers
     [ReducerMethod(typeof(IncrementCounterAction))]
     public static CounterState ReduceIncrementCounterAction(CounterState state) =>
       new CounterState(clickCount: state.ClickCount + 1);
+
+    // can also use this way - 
+    //  [ReducerMethod]
+    //  public static CounterState ReduceIncrementCounterAction(CounterState state, IncrementCounterAction action) =>
+    //    new CounterState(clickCount: state.ClickCount + 1);
 }
