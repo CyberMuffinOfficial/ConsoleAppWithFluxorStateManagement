@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32516.85
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleAppWithFluxorStateManagement", "ConsoleAppWithFluxorStateManagement.csproj", "{DDF335A1-4D17-4FD7-81D4-882777086639}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DDF335A1-4D17-4FD7-81D4-882777086639}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DDF335A1-4D17-4FD7-81D4-882777086639}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DDF335A1-4D17-4FD7-81D4-882777086639}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DDF335A1-4D17-4FD7-81D4-882777086639}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {EE523E62-020D-4BF0-B245-A23E74BBA82E}
+	EndGlobalSection
+EndGlobal
