@@ -1,4 +1,5 @@
 ﻿global using Fluxor;
+global using ConsoleAppWithFluxorStateManagement.Services;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ConsoleAppWithFluxorStateManagement
@@ -11,6 +12,7 @@ namespace ConsoleAppWithFluxorStateManagement
             services.AddScoped<App>();
             services.AddFluxor(o => o
               .ScanAssemblies(typeof(Program).Assembly));
+            services.AddScoped<IWeatherForecastService, WeatherForecastService>();
 
             IServiceProvider serviceProvider = services.BuildServiceProvider();
 
