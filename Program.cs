@@ -2,6 +2,7 @@
 global using ConsoleAppWithFluxorStateManagement.Services;
 global using ConsoleAppWithFluxorStateManagement.Shared;
 using Microsoft.Extensions.DependencyInjection;
+using ConsoleAppWithFluxorStateManagement.Store.Middlewares.Logging;
 
 namespace ConsoleAppWithFluxorStateManagement
 {
@@ -12,7 +13,8 @@ namespace ConsoleAppWithFluxorStateManagement
             var services = new ServiceCollection();
             services.AddScoped<App>();
             services.AddFluxor(o => o
-              .ScanAssemblies(typeof(Program).Assembly));
+                .ScanAssemblies(typeof(Program).Assembly)
+                .AddMiddleware<LoggingMiddleware>());
             services.AddScoped<IWeatherForecastService, WeatherForecastService>();
 
             IServiceProvider serviceProvider = services.BuildServiceProvider();

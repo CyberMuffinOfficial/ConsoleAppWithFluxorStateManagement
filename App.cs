@@ -19,7 +19,19 @@ One second later the mock service returns data.
 The effect method bundles the result data into a new FetchDataResultAction and dispatches the action.
 The ReduceFetchDataResultAction reducer methods sets IsLoading to false, and sets Forecasts to the values in the action.
 The store now has new state for WeatherState so executes its StateChanged event, resulting in the new state being output to the console below the options menu.
-*/
+
+ 
+ Middleware lifecycle
+Task InitializeAsync(IStore store)
+Executed when the store is first initialised. This gives us an opportunity to store away a reference to the store that has been initialized.
+void AfterInitializeAllMiddlewares()
+Once the store has been initialised, and InitializeAsync has been executed on all Middleware, this method will be executed.
+bool MayDispatchAction(object action)
+Every time IDispatcher.Dispatch is executed, the action dispatched will first be passed to every Middleware in turn to give it the chance to veto the action. If the method returns true then the action will be dispatched. The first Middleware to return false will terminate the dispatch process. An example of this is the ReduxDevToolsMiddleware.cs class which prevents the dispatching of new actions when the user is viewing a historical state.
+void BeforeDispatch(object action)
+Once all Middlewares have approved, this method is called to inform us the action is about to be reduced into state.
+void AfterDispatch(object action)
+After the action has been processed by all reducers this method will be called.*/
 public class App
 {
     private readonly IStore Store;
